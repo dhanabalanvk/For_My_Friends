@@ -48,17 +48,18 @@ public class FilterUtil {
 		int lastNearestEffDays = 0;
 		int lastNearestTermDays = 0;
 
-		boolean firstTime = true;
+		boolean firstTimeActive = true;
+		boolean firstTimeInActive = true;
 
 		for (EffectiveTermVO data : testData) {
 			Date effDt = util.getDateFormat(data.getEffDt());
 			Date termDt = util.getDateFormat(data.getTermDt());
-			if (!isActive && termDt.after(today)) {
+			if (!isActive && termDt.after(today) && effDt.before(today)) {
 				isActive = true;
 			}
 			// If Active record is found then finding the nearest effective date
 			// object
-			if (termDt.after(today)) {
+			if (termDt.after(today) && effDt.before(today)) {
 				// Taking number of days between current date and effective date
 				int diffInDays = util.diffNumOfDays(today, effDt);
 
@@ -66,20 +67,20 @@ public class FilterUtil {
 				 * Consider first object is the required object for the first
 				 * time.
 				 */
-				if (firstTime) {
+				if (firstTimeActive) {
 					lastNearestEffDays = diffInDays;
 					requiredObj = data;
-					firstTime = false;
+					firstTimeActive = false;
 				}
 				/*
 				 * If the effective date is nearer to today than previous one
 				 * then assign this as required object
 				 */
-				if (lastNearestEffDays < diffInDays) {
+				if (diffInDays < lastNearestEffDays) {
 					lastNearestEffDays = diffInDays;
 					requiredObj = data;
 				}
-			} else if (!isActive) {
+			} else if (!isActive && termDt.before(today)) {
 				// Taking number of days between current date and term date
 				int diffInDays = util.diffNumOfDays(today, termDt);
 
@@ -87,10 +88,10 @@ public class FilterUtil {
 				 * Consider first object is the required object for the first
 				 * time.
 				 */
-				if (firstTime) {
+				if (firstTimeInActive) {
 					lastNearestTermDays = diffInDays;
 					requiredObj = data;
-					firstTime = false;
+					firstTimeInActive = false;
 				}
 				/*
 				 * If the term date is nearer to today than previous one then
@@ -155,16 +156,28 @@ public class FilterUtil {
 		EffectiveTermVO testObj = new EffectiveTermVO();
 
 		// Test Data - 1
-		testObj.setEffDt("2012-7-28");
-		testObj.setTermDt("2018-7-24");
+		testObj.setEffDt("2018-7-28");
+		testObj.setTermDt("2019-7-24");
 		testData.add(testObj);
 
 		// Test Data - 2
 		testObj = new EffectiveTermVO();
-		testObj.setEffDt("2011-7-27");
-		testObj.setTermDt("2015-5-25");
+		testObj.setEffDt("2012-7-27");
+		testObj.setTermDt("2019-8-25");
 		testData.add(testObj);
-
+		
+		// Test Data - 3
+		testObj = new EffectiveTermVO();
+		testObj.setEffDt("2012-8-27");
+		testObj.setTermDt("2013-5-25");
+		testData.add(testObj);
+		/*
+		// Test Data - 4
+		testObj = new EffectiveTermVO();
+		testObj.setEffDt("2011-7-27");
+		testObj.setTermDt("2018-5-25");
+		testData.add(testObj);
+*/
 		/*
 		 * testObj.setEffDt("2014-6-14"); testObj.setTermDt("2016-9-25");
 		 * testData.add(testObj);
