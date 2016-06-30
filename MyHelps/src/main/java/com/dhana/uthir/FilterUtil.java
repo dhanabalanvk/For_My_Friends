@@ -14,6 +14,7 @@ import java.util.List;
  *
  */
 public class FilterUtil {
+	
 
 	/**
 	 * @param args
@@ -22,6 +23,17 @@ public class FilterUtil {
 		FilterUtil util = new FilterUtil();
 		// Preparing test data
 		List<EffectiveTermVO> testData = util.prepareTestData();
+		System.out.println("Result : " + util.processRequest(testData));
+	}
+
+	/**
+	 * This method is to process given list and identifies the required object.
+	 * 
+	 * @param testData
+	 * @return requiredObj - output
+	 */
+	public EffectiveTermVO processRequest(List<EffectiveTermVO> testData) {
+		FilterUtil util = new FilterUtil();
 		// Current date
 		Date today = new Date();
 
@@ -90,7 +102,7 @@ public class FilterUtil {
 				}
 			}
 		}
-		System.out.println(requiredObj);
+		return requiredObj;
 	}
 
 	/**
